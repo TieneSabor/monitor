@@ -71,6 +71,8 @@ void monitorNode::run(){
         if (_testQueue.size()>0){
             std_msgs::Int32MultiArray msg;
             msg.data = _testQueue.front();
+            // insert fake hash
+            msg.data.insert(msg.data.begin(), 0);
             _testQueue.pop();
             eventPub.publish(msg);
         }
@@ -147,7 +149,7 @@ void monitorNode::eventCB(const std_msgs::Int32MultiArray::ConstPtr& msg){
     }
     // distribute event to each monitor
     std::vector<int> event;
-    event.insert(event.begin(), msg->data.begin()++, msg->data.end());
+    event.insert(event.begin(), ++msg->data.begin(), msg->data.end());
     for (int i = 0; i<_monitorPtrs.size(); i++){
         _monitorPtrs[i]->newEvent(event);
     }
