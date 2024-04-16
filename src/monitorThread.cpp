@@ -18,6 +18,10 @@ pid_t monitorThread::getPid(){
     return _pid;
 }
 
+std::string monitorThread::getMonitorName(){
+    return _moni.getMonitorName();
+}
+
 void monitorThread::run(){
     if (!_moni.isAPListSet()){
         _log.erro("Event AP list not set.  Monitor will not run.  ");

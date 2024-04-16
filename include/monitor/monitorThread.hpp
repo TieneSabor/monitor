@@ -38,6 +38,8 @@ namespace monitor{
         status getStatus();
 
         pid_t getPid();
+        
+        std::string getMonitorName();
 
         void run();
 

@@ -57,7 +57,16 @@ void monitorNode::run(){
     ros::Subscriber metaSub  = _n.subscribe("monitor/meta",  1000, &monitorNode::metaCB,  this);
     ros::Subscriber eventSub = _n.subscribe("monitor/event", 1000, &monitorNode::eventCB, this);
     ros::Publisher eventPub = _n.advertise<std_msgs::Int32MultiArray>("monitor/event", 1000);
+    // status & status meta publisher
+    ros::Publisher statMetaPub = _n.advertise<std_msgs::String>("monitor/statMeta",1000);
+    ros::Publisher statusPub   = _n.advertise<std_msgs::Int32MultiArray>("monitor/status",1000);
     ros::Rate loop_rate(100);
+    // status meta published in a much lower freq.
+    int statMetaPeriod = 100;
+    int statMetaCounter = 0;
+    if (updateStatMeta() != OK){
+        _log.erro("Status Meta Error.");
+    }
     // the while loop
     while(true){
         // process event
@@ -72,10 +81,37 @@ void monitorNode::run(){
             std_msgs::Int32MultiArray msg;
             msg.data = _testQueue.front();
             // insert fake hash
-            msg.data.insert(msg.data.begin(), 0);
+            msg.data.insert(msg.data.begin(), getHash());
             _testQueue.pop();
             eventPub.publish(msg);
         }
+        // publish monitor status
+        if (statMetaCounter >= statMetaPeriod){
+            std_msgs::String msg;
+            msg.data = _statMeta;
+            statMetaPub.publish(msg);
+            statMetaCounter = 0;
+        }
+        statMetaCounter ++;
+        // TODO: check the status is correct
+        std_msgs::Int32MultiArray msg;
+        msg.data.push_back(getHash());
+        for (int i=0; i<_monitorPtrs.size(); i++){
+            int stat = 0;
+            status monStat = _monitorPtrs[i]->getStatus();
+            // can just transfer enum to int tho
+            if (monStat == UNDECIDE){
+                stat = 0;
+            } else if (monStat == VIOLATE){
+                stat = 1;
+            } else if (monStat == SLEEP){
+                stat = 2;
+            } else {
+                _log.warn("Unknown Monitor Status...");
+            }
+            msg.data.push_back(stat);
+        }
+        statusPub.publish(msg);
         // spin
         ros::spinOnce();
         loop_rate.sleep();
@@ -133,7 +169,11 @@ void monitorNode::metaCB(const std_msgs::String::ConstPtr& msg){
     // TODO: do we want a flag s.t. we only receive events after meta?
 }
 
-ret monitorNode::heshChecker(hesh_t hesh){
+hash_t monitorNode::getHash(){
+    return 0;
+}
+
+ret monitorNode::hashChecker(hash_t hash){
     return OK;
 }
 
@@ -142,9 +182,9 @@ void monitorNode::eventCB(const std_msgs::Int32MultiArray::ConstPtr& msg){
         return;
     }
     // check hash
-    hesh_t hesh = (hesh_t) msg->data[0];
-    if (ERR == heshChecker(hesh)){
-        _log.erro("Event hesh is wrong: %d  ", (unsigned int) hesh);
+    hash_t hash = (hash_t) msg->data[0];
+    if (ERR == hashChecker(hash)){
+        _log.erro("Event hash is wrong: %d  ", (unsigned int) hash);
         return;
     }
     // distribute event to each monitor
@@ -153,6 +193,17 @@ void monitorNode::eventCB(const std_msgs::Int32MultiArray::ConstPtr& msg){
     for (int i = 0; i<_monitorPtrs.size(); i++){
         _monitorPtrs[i]->newEvent(event);
     }
+}
+
+ret monitorNode::updateStatMeta(){
+    _statMeta.clear();
+    for (int i=0; i<_monitorPtrs.size(); i++){
+        if (i != 0){
+            _statMeta += ";";
+        }
+        _statMeta += _monitorPtrs[i]->getMonitorName();
+    }
+    return OK;
 }
 
 void monitorNode::setUpTest(){

@@ -45,6 +45,8 @@ namespace monitor
 
         status getStatus(){  return _monitorStatus;  }
 
+        std::string getMonitorName(){  return _formulaString;  }
+
         // a list of true (1), false (0) or unknown (-1) following the order of _APList.
         ret newEvent(std::vector<int> newEvent);
 
