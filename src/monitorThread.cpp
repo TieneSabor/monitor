@@ -64,6 +64,7 @@ void monitorThread::run(){
                     break;
             }
             ret retOut = writePipe(_linkOut, _bufOut, 1);
+            _log.debg("write fb: %d", fb);
             if (retOut == ERR){
                 _log.erro("Feedback failed.  ");
             }
@@ -122,13 +123,22 @@ ret monitorThread::processEvent(){
     }
     // check if we have feedback from the monitor
     signed char _bufOut[2]; // we need one slot for feedback
-    ret retR = readPipe(_linkOut, _bufOut, 1);
+    // read until the end
+    struct pollfd pfd;
+    pfd.fd = _linkOut[0];
+    pfd.events = POLLIN;
+    ret retR = ERR;
+    while (poll(&pfd, 1, 0) == 1)
+    {
+        retR = readPipe(_linkOut, _bufOut, 1);/* there's available data, read it */
+    }
     if (retR == ERR){
         _log.debg("Monitor not ready");
         // not ready
         return OK;
     } else {
         feedback fb = (feedback) _bufOut[0];
+        _log.debg("read fb: %d", _bufOut[0]);
         // if ((fb == DONE) || (fb == VIOLATED) || (fb == SLEEPING)){
         if ((fb == DONE) || (fb == SLEEPING)){
             // pop one and send
@@ -206,7 +216,7 @@ ret monitorThread::readPipe(int* link, signed char * buf, int size){
         _log.erro("Read pipe select() error.  ");
         return ERR;
     } else if(rv == 0){
-        _log.debg("Read pipe time out");
+        // _log.debg("Read pipe time out");
         return ERR;
     }
 

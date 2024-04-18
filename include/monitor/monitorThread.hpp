@@ -12,6 +12,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <string.h>
+#include <poll.h>
 #include <sys/mman.h>
 #include <sys/types.h>
 #include <sys/select.h>
