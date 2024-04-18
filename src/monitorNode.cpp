@@ -157,11 +157,11 @@ void monitorNode::eventCB(const std_msgs::Int32MultiArray::ConstPtr& msg){
 
 void monitorNode::setUpTest(){
     newAP("a");
-    newAP("b");
-    newAP("c");
-    newAP("d");
-    newFunction("a U b");
-    newFunction("G c");
+    // newAP("b");
+    // newAP("c");
+    // newAP("d");
+    // newFunction("a U b");
+    newFunction("G a");
     std::vector<int>* evA = new std::vector<int>({1,0,0,0});
     std::vector<int>* evB = new std::vector<int>({0,1,0,0});
     std::vector<int>* evEmp = new std::vector<int>({0,0,0,0});
@@ -177,8 +177,8 @@ void monitorNode::setUpTest(){
     // _testQueue.push(* evUnk);
     // _testQueue.push(* evB);
     // violate
-    _testQueue.push(* evEmp);
-    _testQueue.push(* evB);
-    _testQueue.push(* evA);
-    _testQueue.push(* evB);
+    // _testQueue.push(* evEmp);
+    // _testQueue.push(* evB);
+    // _testQueue.push(* evA);
+    // _testQueue.push(* evB);
 }
