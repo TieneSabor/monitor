@@ -33,7 +33,7 @@ catkin_make
 ## Run Example
 ### Lidar Instrument
 This program collects data from lidar (topic name: "\scan", topic type: "sensor_msgs/LaserScan") and convert it to the following atomic proposition
-- e is true if and only if the nearest obstacle to the lidar is 0.75 meters away.
+- e is true if and only if the nearest obstacle to the lidar is greater 0.75 meters away.
 
 ### Monitor 
 This program receives events from Lidar Instrument and check the trace with following formula
