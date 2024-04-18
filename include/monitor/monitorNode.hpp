@@ -12,7 +12,7 @@
 
 namespace monitor{
 
-typedef unsigned int hesh_t;
+typedef unsigned int hash_t;
 
 class monitorNode{
 public:
@@ -38,11 +38,15 @@ private:
     ret metaChecker(std::vector<std::string> metaFromMsg);
     void metaCB(const std_msgs::String::ConstPtr& msg);
 
-    ret heshChecker(hesh_t hesh);
+    hash_t getHash();
+    ret hashChecker(hash_t hash);
     void eventCB(const std_msgs::Int32MultiArray::ConstPtr& msg);
 
     std::string _fileName;
     ret inputParser();
+
+    std::string _statMeta;
+    ret updateStatMeta();
 
     logger _log;
 
