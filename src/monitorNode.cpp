@@ -170,7 +170,7 @@ void monitorNode::metaCB(const std_msgs::String::ConstPtr& msg){
 }
 
 hash_t monitorNode::getHash(){
-    return 0;
+    return 2000;
 }
 
 ret monitorNode::hashChecker(hash_t hash){
