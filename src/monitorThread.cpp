@@ -123,7 +123,7 @@ ret monitorThread::processEvent(){
     }
     // check if we have feedback from the monitor
     signed char _bufOut[2]; // we need one slot for feedback
-    // read until the end
+    // read until the end, ref: https://stackoverflow.com/questions/66228759/clear-a-pipe-in-c
     struct pollfd pfd;
     pfd.fd = _linkOut[0];
     pfd.events = POLLIN;
