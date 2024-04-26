@@ -172,6 +172,13 @@ target_link_libraries(${PROJECT_NAME}Node
 #   scripts/my_python_script
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
+catkin_python_setup()
+catkin_install_python(PROGRAMS scripts/fake_controller.py 
+  scripts/fake_monitor_status.py
+  scripts/lidar_instrument.py 
+  scripts/safety_switch_by_monitor.py 
+  scripts/safety_control_test.py
+	DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 ## Mark executables for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
