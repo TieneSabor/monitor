@@ -49,7 +49,7 @@ def callback_lidar(data):
     for i in range(len(data.ranges)):
         if(data.ranges[i] < minRange):
             minRange = _MAX
-            minRangeAng = msg.angle_min + (i/nA)*(msg.angle_max - msg.angle_min)
+            minRangeAng = data.angle_min + (i/nA)*(data.angle_max - data.angle_min)
     obstacle_x = minRange*cos(minRangeAng)
     obstacle_y = minRange*sin(minRangeAng)
 
