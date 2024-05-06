@@ -4,6 +4,7 @@
 #include <monitor/monitorThread.hpp>
 #include <monitor/logger.hpp>
 #include <signal.h>
+#include <chrono>
 
 // ros library
 #include "ros/ros.h"
@@ -29,11 +30,19 @@ public:
 
     void newFunction(std::string LTLf);
 
+    void newTimer(std::string timerAP, float timeBound);
+
 private:
     // dealing with what AP is in this case
     std::vector<std::string> _APNames;
+    std::map<std::string, int> _APNames2EventID;
+    int _evNum = 1;
     std::vector<std::string> _LTLfs;
     std::vector<monitorThread*> _monitorPtrs;
+    std::map<std::string, float> _timerBoundMap;
+
+    // timer
+    std::chrono::_V2::system_clock::time_point _exp;
 
     ret metaChecker(std::vector<std::string> metaFromMsg);
     void metaCB(const std_msgs::String::ConstPtr& msg);

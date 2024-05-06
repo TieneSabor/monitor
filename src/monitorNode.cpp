@@ -67,6 +67,8 @@ void monitorNode::run(){
     if (updateStatMeta() != OK){
         _log.erro("Status Meta Error.");
     }
+    // start expo
+    _exp = std::chrono::high_resolution_clock::now();
     // the while loop
     while(true){
         // process event
@@ -121,11 +123,19 @@ void monitorNode::run(){
 void monitorNode::newAP(std::string AP){
     std::string* ap = new std::string(AP);
     _APNames.push_back(* ap);
+    _APNames2EventID[* ap] = _evNum;
+    _evNum ++;
 }
 
 void monitorNode::newFunction(std::string LTLf){
     std::string* ltlf = new std::string(LTLf);
     _LTLfs.push_back(* ltlf);
+}
+
+void monitorNode::newTimer(std::string timerAP, float timeBound){
+    std::string* ap = new std::string(timerAP);
+    _APNames.push_back(* ap);
+    _timerBoundMap[* ap] = timeBound;
 }
 
 ret monitorNode::inputParser(){
@@ -189,7 +199,25 @@ void monitorNode::eventCB(const std_msgs::Int32MultiArray::ConstPtr& msg){
     }
     // distribute event to each monitor
     std::vector<int> event;
-    event.insert(event.begin(), ++msg->data.begin(), msg->data.end());
+    // event.insert(event.begin(), ++msg->data.begin(), msg->data.end());
+    for (int i=0; i<_APNames.size(); i++){
+        if (_APNames2EventID.find(_APNames[i])!=_APNames2EventID.end()){
+            int eid = _APNames2EventID[_APNames[i]];
+            event.push_back(msg->data[eid]);
+        } else {
+            // create timer
+            auto elapsed = std::chrono::high_resolution_clock::now() - _exp;
+            long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
+            if (_timerBoundMap[_APNames[i]]*1000000 > microseconds){
+                // have not expired
+                event.push_back(1);
+                _log.debg("Timer Not Expired");
+            } else {
+                event.push_back(0);
+                _log.prnt("Timer Expired");
+            }
+        }
+    }
     for (int i = 0; i<_monitorPtrs.size(); i++){
         _monitorPtrs[i]->newEvent(event);
     }
@@ -207,16 +235,34 @@ ret monitorNode::updateStatMeta(){
 }
 
 void monitorNode::setUpTest(){
-    newAP("a");
+    newTimer("t1", 5.0);
+    newTimer("t2", 5.0);
+    newAP("p1");
+    newAP("p2");
+    newAP("p3");
+    newAP("p4");
+    newAP("p5");
+    newAP("p6");
+    newAP("p7");
+    newAP("p8");
+    newAP("p9");
+    newFunction("G p1");
+    newFunction("G p2");
+    newFunction("G p3");
+    newFunction("G p4");
+    newFunction("(! p6) U p5");
+    newFunction("(! t1) U p5");
+    newFunction("(! t2) U p6");
+    // Test
     // newAP("b");
     // newAP("c");
     // newAP("d");
     // newFunction("a U b");
-    newFunction("G a");
-    std::vector<int>* evA = new std::vector<int>({1,0,0,0});
-    std::vector<int>* evB = new std::vector<int>({0,1,0,0});
-    std::vector<int>* evEmp = new std::vector<int>({0,0,0,0});
-    std::vector<int>* evUnk = new std::vector<int>({-1,0,0,0});
+    // newFunction("G a");
+    // std::vector<int>* evA = new std::vector<int>({1,0,0,0});
+    // std::vector<int>* evB = new std::vector<int>({0,1,0,0});
+    // std::vector<int>* evEmp = new std::vector<int>({0,0,0,0});
+    // std::vector<int>* evUnk = new std::vector<int>({-1,0,0,0});
     // healthy
     // _testQueue.push(* evA);
     // _testQueue.push(* evA);
