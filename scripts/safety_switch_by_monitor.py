@@ -7,7 +7,7 @@ from sensor_msgs.msg import Joy
 
 enable = False
 pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
-can_move = False
+can_move = True
 
 def callback_listener(data):
     if not enable or not can_move :
