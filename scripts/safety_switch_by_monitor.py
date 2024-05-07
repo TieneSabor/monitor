@@ -10,10 +10,17 @@ pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
 can_move = True
 
 def callback_listener(data):
-    if not enable or not can_move :
+    # if not enable or not can_move :
+    if not enable :
         empty_twist = Twist()
-        pub.publish(empty_twist)
+        pub.publish(empty_twist)  
+    elif not can_move :
+        print("Violated")
     else:
+        pub.publish(data)
+        
+def safe_callback_listener(data):
+    if not can_move :
         pub.publish(data)
 
 def callback_joy(data):
@@ -39,6 +46,7 @@ def safety_switch():
 
     rospy.init_node('safety_switch_by_monitor', anonymous=True)
     rospy.Subscriber("/controller/cmd_vel", Twist, callback_listener)
+    rospy.Subscriber("/controller/cmd_vel_safe", Twist, safe_callback_listener)
 
     rospy.Subscriber("/bluetooth_teleop/joy", Joy, callback_joy)
     rospy.Subscriber("/monitor/status", Int32MultiArray, callback_monitor)

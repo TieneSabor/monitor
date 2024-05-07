@@ -178,6 +178,8 @@ catkin_install_python(PROGRAMS scripts/fake_controller.py
   scripts/lidar_instrument.py 
   scripts/safety_switch_by_monitor.py 
   scripts/safety_control_test.py
+  scripts/position_instrument.py
+  scripts/instrument_fusion.py
 	DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 ## Mark executables for installation

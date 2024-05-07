@@ -19,7 +19,8 @@ Wrange = [-0.8, 0.8]
 
 lidar_mount_angle = 0 # 3.14/2
     
-pub = rospy.Publisher('/controller/cmd_vel', Twist, queue_size=10)
+# pub = rospy.Publisher('/controller/cmd_vel', Twist, queue_size=10)
+pub = rospy.Publisher('/controller/cmd_vel_safe', Twist, queue_size=10)
 
 # import data
 data_dir = pjoin(dirname(__file__), '..', 'data')

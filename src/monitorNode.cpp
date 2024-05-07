@@ -210,11 +210,11 @@ void monitorNode::eventCB(const std_msgs::Int32MultiArray::ConstPtr& msg){
             long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
             if (_timerBoundMap[_APNames[i]]*1000000 > microseconds){
                 // have not expired
-                event.push_back(1);
+                event.push_back(0);
                 _log.debg("Timer Not Expired");
             } else {
-                event.push_back(0);
-                _log.prnt("Timer Expired");
+                event.push_back(1);
+                _log.debg("Timer Expired");
             }
         }
     }
@@ -235,8 +235,8 @@ ret monitorNode::updateStatMeta(){
 }
 
 void monitorNode::setUpTest(){
-    newTimer("t1", 5.0);
-    newTimer("t2", 5.0);
+    newTimer("t1", 30.0);
+    newTimer("t2", 30.0);
     newAP("p1");
     newAP("p2");
     newAP("p3");

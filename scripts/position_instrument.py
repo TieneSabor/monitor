@@ -10,7 +10,7 @@ pub_x2 = rospy.Publisher('monitor/event/isatx2', Bool, queue_size=10)
 
 def callback_pose(data):
     # Stay within 2m of the origin. Robot moves in XZ plane
-    zone_threshold = 1.5
+    zone_threshold = 2.0
     target_threshold = 0.2
     within_work_zone = close_to(0,0,data.pose.position.x,data.pose.position.z,zone_threshold)
     is_at_x1 = close_to(1,0,data.pose.position.x,data.pose.position.z,target_threshold)
