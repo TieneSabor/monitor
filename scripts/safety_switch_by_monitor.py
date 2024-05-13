@@ -20,7 +20,7 @@ def callback_listener(data):
         pub.publish(data)
         
 def safe_callback_listener(data):
-    if not can_move :
+    if not can_move and enable:
         pub.publish(data)
 
 def callback_joy(data):

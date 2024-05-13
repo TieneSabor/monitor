@@ -29,7 +29,7 @@ def close_to(target_x, target_z, actual_x, actual_z, dist_threshold):
 
 def pose_monitor():
     rospy.init_node('pose_monitor', anonymous=True)
-    rospy.Subscriber("/mocap_node/jackal7/pose", PoseStamped, callback_pose)
+    rospy.Subscriber("/mocap_node/Jackal7/pose", PoseStamped, callback_pose)
     rospy.spin()
 
 if __name__ == '__main__':

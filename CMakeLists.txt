@@ -180,6 +180,7 @@ catkin_install_python(PROGRAMS scripts/fake_controller.py
   scripts/safety_control_test.py
   scripts/position_instrument.py
   scripts/instrument_fusion.py
+  scripts/instrument_fusion_with_history.py
 	DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 ## Mark executables for installation

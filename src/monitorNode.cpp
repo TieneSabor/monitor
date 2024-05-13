@@ -211,7 +211,7 @@ void monitorNode::eventCB(const std_msgs::Int32MultiArray::ConstPtr& msg){
             if (_timerBoundMap[_APNames[i]]*1000000 > microseconds){
                 // have not expired
                 event.push_back(0);
-                _log.debg("Timer Not Expired");
+                _log.debg("Timer Not Expired: %d < %d", microseconds, (int) _timerBoundMap[_APNames[i]]);
             } else {
                 event.push_back(1);
                 _log.debg("Timer Expired");
